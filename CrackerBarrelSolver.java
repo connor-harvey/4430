@@ -6,7 +6,7 @@ import java.util.*;
 
 public class CrackerBarrelSolver{
 
-	// Program crashes on runtime, couldn't fix the issue
+	// Program does not fully populate the solution arraylist, therefore solution set is never printed out step by step because the size remains 0
 
 	public static int[][] moves = {
 		{0,1,3},{0,2,5},{1,3,6},{1,4,8},{2,4,7},
@@ -35,18 +35,28 @@ public class CrackerBarrelSolver{
 		// counting number of moves made
 		int moveCount = 0;
 
-		// finding and trying the possible next moves
-		for(int i = 0; i < possibleMoves(puzzle, remainingMoves).size(); i++){
-			tempMoves.add(possibleMoves(puzzle, remainingMoves).get(i));
-			makeMove(puzzle, tempMoves, remainingMoves, moveCount);
-		}
-		printSolution(tempMoves);
+		// setting the solution to the eventual full set of moves
+		ArrayList<int[]> solved = makeMove(puzzle, tempMoves, remainingMoves, moveCount);
+		printSolution(solved);
 	}
 	// makes the next move if possible or returns the solution set if finished
 	// takes the puzzle, moves so far, remaining possible moves, and number of moves
-	public static void makeMove(int[] p, ArrayList<int[]> tMoves, ArrayList<int[]> rMoves, int c){
-		// make the next move
-		//makeMove(p, tMoves, rMoves, c);
+	public static ArrayList<int[]> makeMove(int[] p, ArrayList<int[]> tMoves, ArrayList<int[]> rMoves, int c){
+		ArrayList<int[]> returnArray = new ArrayList<int[]>();
+		if(c >= 14){
+			for(int i = 0; i < 14; i++){
+				returnArray.add(tMoves.get(i));
+			}
+		}
+		else{
+			ArrayList<int[]> pMoves = possibleMoves(p, rMoves);
+			for(int i = 0; i < pMoves.size(); i++){
+				tMoves.add(pMoves.get(i));
+				c++;
+				makeMove(p, tMoves, rMoves, c);
+			}
+		}
+		return returnArray;
 	}
 
 	// Returning the list of possible moves given puzzle and remaining moves
@@ -66,8 +76,21 @@ public class CrackerBarrelSolver{
 
 	public static void printSolution(ArrayList<int[]> tMoves){
 		System.out.println("Solution reached");
-		for(int i = 0; i < 15; i++){
-			System.out.println("{" + tMoves.get(i)[0] + "," + tMoves.get(i)[1] + "," + tMoves.get(i)[2] + "}");
+		int[] p = {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+		printPuzzle(p);
+		for(int i = 0; i < tMoves.size(); i++){
+			printPuzzle(p);
+			p[tMoves.get(i)[0]] = 0;
+			p[tMoves.get(i)[1]] = 0;
+			p[tMoves.get(i)[2]] = 1;
 		}
+	}
+	// Printing each step of the puzzle
+	public static void printPuzzle(int[] p){
+		System.out.println("    " + p[0] + "    ");
+		System.out.println("   " + p[1] + " " + p[2] + "   ");
+		System.out.println("  " + p[3] + " " + p[4] + " " + p[5] + "  ");
+		System.out.println(" " + p[6] + " " + p[7] + " " + p[8] + " " + p[9] + " ");
+		System.out.println(p[10] + " " + p[11] + " " + p[12] + " " + p[13] + " " + p[14]);
 	}
 }
